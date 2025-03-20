@@ -126,18 +126,20 @@ create_virtualenv()
     fi
 
     echo_text "Creating virtual environment"
-    python3 -m venv "${KSENV}"
+    python3 -m venv "${KSENV}" --without-pip
 
     if ! . "${KSENV}/bin/activate"; then
         echo_error "Could not activate the enviroment, try deleting ${KSENV} and retry"
         exit 1
     fi
 
+    echo_text curl -sS https://bootstrap.pypa.io/get-pip.py | python
+
     if [[ "$(uname -m)" =~ armv[67]l ]]; then
         echo_text "Using armv[67]l! Adding piwheels.org as extra index..."
-        pip --disable-pip-version-check install --extra-index-url https://www.piwheels.org/simple -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
+        sudo pip --disable-pip-version-check install --extra-index-url https://www.piwheels.org/simple -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
     else
-        pip --disable-pip-version-check install -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
+        sudo pip --disable-pip-version-check install -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
     fi
     if [ $? -gt 0 ]; then
         echo_error "Error: pip install exited with status code $?"
@@ -145,11 +147,11 @@ create_virtualenv()
         sudo apt install -y build-essential cmake libsystemd-dev
         if [[ "$(uname -m)" =~ armv[67]l ]]; then
             echo_text "Adding piwheels.org as extra index..."
-            pip install --extra-index-url https://www.piwheels.org/simple --upgrade pip setuptools
-            pip install --extra-index-url https://www.piwheels.org/simple -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
+            sudo pip install --extra-index-url https://www.piwheels.org/simple --upgrade pip setuptools
+            sudo pip install --extra-index-url https://www.piwheels.org/simple -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
         else
-            pip install --upgrade pip setuptools
-            pip install -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
+            sudo pip install --upgrade pip setuptools
+            sudo pip install -r ${KSPATH}/scripts/KlipperScreen-requirements.txt
         fi
         if [ $? -gt 0 ]; then
             echo_error "Unable to install dependencies, aborting install."
