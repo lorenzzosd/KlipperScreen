@@ -133,7 +133,7 @@ create_virtualenv()
         exit 1
     fi
 
-    echo_text curl -sS https://bootstrap.pypa.io/get-pip.py | python
+    curl -sS https://bootstrap.pypa.io/get-pip.py | python
 
     if [[ "$(uname -m)" =~ armv[67]l ]]; then
         echo_text "Using armv[67]l! Adding piwheels.org as extra index..."
